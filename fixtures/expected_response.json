@@ -1,0 +1,6 @@
+{
+  "invalid_customers": [
+    { "id": 1, "invalid_fields": ["name", "age"] },
+    { "id": 3, "invalid_fields": ["password"] }
+  ]
+}
