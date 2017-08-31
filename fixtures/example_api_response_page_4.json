@@ -1,0 +1,45 @@
+{
+  "validations": [
+    {
+      "name": {
+        "required": true,
+        "type": "string",
+        "length": {
+          "min": 5
+        }
+      }
+    },
+    {
+      "email": {
+        "required": true
+      }
+    },
+    {
+      "age": {
+        "type": "number",
+        "required": false
+      }
+    },
+    {
+      "newsletter": {
+        "required": true,
+        "type": "boolean"
+      }
+    }
+  ],
+  "customers": [
+    {
+      "id": 16,
+      "name": "Daniella",
+      "email": "daniella@interview.com",
+      "age": 31,
+      "country": "Spain",
+      "newsletter": false
+    }
+  ],
+  "pagination": {
+    "current_page": 4,
+    "per_page": 5,
+    "total": 16
+  }
+}

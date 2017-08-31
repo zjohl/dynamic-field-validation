@@ -18,6 +18,15 @@ var _ = Describe("Pagination", func() {
 			Expect(pagination.LastPage()).To(BeTrue())
 		})
 
+		It("returns true for only one page", func() {
+			pagination := &Pagination{
+				CurrentPage: 1,
+				PerPage:     5,
+				Total:       5,
+			}
+			Expect(pagination.LastPage()).To(BeTrue())
+		})
+
 		It("returns false if it is not the last page", func() {
 			pagination := &Pagination{
 				CurrentPage: 2,

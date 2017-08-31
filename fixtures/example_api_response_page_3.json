@@ -1,0 +1,77 @@
+{
+  "validations": [
+    {
+      "name": {
+        "required": true,
+        "type": "string",
+        "length": {
+          "min": 5
+        }
+      }
+    },
+    {
+      "email": {
+        "required": true
+      }
+    },
+    {
+      "age": {
+        "type": "number",
+        "required": false
+      }
+    },
+    {
+      "newsletter": {
+        "required": true,
+        "type": "boolean"
+      }
+    }
+  ],
+  "customers": [
+    {
+      "id": 11,
+      "name": "Dora",
+      "email": null,
+      "age": 22,
+      "country": "Hungary",
+      "newsletter": false
+    },
+    {
+      "id": 12,
+      "name": "Stella",
+      "email": "stella@interview.com",
+      "age": 21,
+      "country": "South Korea",
+      "newsletter": false
+    },
+    {
+      "id": 13,
+      "name": "Stuart",
+      "email": "stuart@interview.com",
+      "age": 33,
+      "country": "Australia",
+      "newsletter": true
+    },
+    {
+      "id": 14,
+      "name": "Ismael",
+      "email": "ismael@interview.com",
+      "age": 27,
+      "country": "Mexico",
+      "newsletter": true
+    },
+    {
+      "id": 15,
+      "name": "Putra",
+      "email": "putra@interview.com",
+      "age": 30,
+      "country": "Singapore",
+      "newsletter": null
+    }
+  ],
+  "pagination": {
+    "current_page": 3,
+    "per_page": 5,
+    "total": 16
+  }
+}

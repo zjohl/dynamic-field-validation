@@ -1,0 +1,77 @@
+{
+  "validations": [
+    {
+      "name": {
+        "required": true,
+        "type": "string",
+        "length": {
+          "min": 5
+        }
+      }
+    },
+    {
+      "email": {
+        "required": true
+      }
+    },
+    {
+      "age": {
+        "type": "number",
+        "required": false
+      }
+    },
+    {
+      "newsletter": {
+        "required": true,
+        "type": "boolean"
+      }
+    }
+  ],
+  "customers": [
+    {
+      "id": 6,
+      "name": null,
+      "email": "oscar@interview.com",
+      "age": "29",
+      "country": "El Salvador",
+      "newsletter": true
+    },
+    {
+      "id": 7,
+      "name": "Tetsuro",
+      "email": "tetsuro@interview.com",
+      "age": 41,
+      "country": "Japan",
+      "newsletter": true
+    },
+    {
+      "id": 8,
+      "name": "Ricardo",
+      "email": "ricardo@interview.com",
+      "age": 26,
+      "country": "Venezuela",
+      "newsletter": false
+    },
+    {
+      "id": 9,
+      "name": "Adrian",
+      "email": "adrian@interview.com",
+      "age": 34,
+      "country": "Ireland",
+      "newsletter": true
+    },
+    {
+      "id": 10,
+      "name": "julien",
+      "email": "julien@interview.com",
+      "age": 25,
+      "country": "Germany",
+      "newsletter": true
+    }
+  ],
+  "pagination": {
+    "current_page": 2,
+    "per_page": 5,
+    "total": 16
+  }
+}

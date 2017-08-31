@@ -7,5 +7,5 @@ type Pagination struct {
 }
 
 func (p *Pagination) LastPage() bool {
-	return p.CurrentPage*p.PerPage > p.Total
+	return p.CurrentPage*p.PerPage >= p.Total
 }
