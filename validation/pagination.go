@@ -1,9 +1,9 @@
 package validation
 
 type Pagination struct {
-	CurrentPage int
-	PerPage     int
-	Total       int
+	CurrentPage int `json:"current_page"`
+	PerPage     int `json:"per_page"`
+	Total       int `json:"total"`
 }
 
 func (p *Pagination) LastPage() bool {

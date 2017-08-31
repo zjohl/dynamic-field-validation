@@ -13,7 +13,7 @@ import (
 
 var _ = Describe("Validator", func() {
 
-	exampleValidator := Validator{
+	exampleValidator := &Validator{
 		Validations: []map[string]Validation{
 			{
 				"name": {
@@ -47,6 +47,11 @@ var _ = Describe("Validator", func() {
 			{"id": 3, "name": "Bernardo", "email": "bernardo@interview.com", "age": 30, "country": "Brazil", "newsletter": "false"},
 			{"id": 4, "name": "Gabriel", "email": "gabriel@interview.com", "age": 28, "country": "Canada", "newsletter": true},
 			{"id": 5, "name": "Alex", "email": "alex@interview.com", "age": 29, "country": "United States", "newsletter": true},
+		},
+		Pagination: Pagination{
+			CurrentPage: 1,
+			PerPage:     5,
+			Total:       16,
 		},
 	}
 

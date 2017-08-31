@@ -12,7 +12,7 @@ func GetValidator(url string, requester HTTPRequester) (*Validator, error) {
 	if err != nil {
 		return nil, err
 	}
-	var resp *Validator
+	resp := &Validator{}
 	err = json.NewDecoder(reader).Decode(resp)
 	return resp, err
 }
@@ -27,21 +27,20 @@ func (v *Validator) InvalidCustomers() ([]byte, error) {
 }
 
 type Validator struct {
-	Validations []map[string]Validation
-	Customers   []Customer
-	Pagination  Pagination
+	Validations []map[string]Validation `json:"validations"`
+	Customers   []Customer              `json:"customers"`
+	Pagination  Pagination              `json:"pagination"`
 }
 
 type Validation struct {
-	Name     string
-	Required bool
-	Type     string // TODO: make enum
-	Length   Length
+	Required bool   `json:"required"`
+	Type     string `json:"type"` // TODO: make enum
+	Length   Length `json:"length"`
 }
 
 type Length struct {
-	Min int
-	Max int
+	Min int `json:"min"`
+	Max int `json:"max"`
 }
 
 type Customer map[string]interface{}
