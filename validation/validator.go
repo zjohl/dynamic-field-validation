@@ -5,46 +5,35 @@ import (
 	"io"
 )
 
-type Validator struct {
-	requester HTTPRequester
-	url       string
-}
-
 type HTTPRequester func(string) (io.ReadCloser, error)
 
-func NewValidator(url string, requester HTTPRequester) Validator {
-	return Validator{
-		requester: requester,
-		url:       url,
-	}
-}
-
-func (v *Validator) InvalidCustomers() ([]byte, error) {
-	_, err := v.getFirstPage()
+func GetValidator(url string, requester HTTPRequester) (*Validator, error) {
+	reader, err := requester(url)
 	if err != nil {
 		return nil, err
 	}
-
-	return nil, nil
-}
-
-func (v *Validator) getFirstPage() (*apiResponse, error) {
-	reader, err := v.requester(v.url)
-	if err != nil {
-		return nil, err
-	}
-	var resp *apiResponse
+	var resp *Validator
 	err = json.NewDecoder(reader).Decode(resp)
 	return resp, err
 }
 
-type apiResponse struct {
-	Validations []Validation
+func (v *Validator) InvalidCustomers() ([]byte, error) {
+	allValid := true
+	for _, customer := range v.Customers {
+		allValid = allValid && customer.IsValid(v.Validations)
+	}
+	//TODO: collect values and marshal
+	return nil, nil
+}
+
+type Validator struct {
+	Validations []map[string]Validation
 	Customers   []Customer
 	Pagination  Pagination
 }
 
 type Validation struct {
+	Name     string
 	Required bool
 	Type     string // TODO: make enum
 	Length   Length
@@ -57,8 +46,6 @@ type Length struct {
 
 type Customer map[string]interface{}
 
-type Pagination struct {
-	CurrentPage int
-	PerPage     int
-	Total       int
+func (c *Customer) IsValid([]map[string]Validation) bool {
+	return false
 }
