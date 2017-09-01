@@ -90,7 +90,7 @@ var _ = Describe("Validator", func() {
 		})
 	})
 
-	FDescribe("Validate", func() {
+	Describe("Validate", func() {
 		exampleCustomer := &Customer{"id": 1, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
 
 		It("returns true for unrequired fields", func() {

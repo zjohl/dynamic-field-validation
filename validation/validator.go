@@ -92,3 +92,24 @@ func (v *Validation) Validate(customer *Customer, name string) bool {
 
 	return true
 }
+
+func (v *Validator) UnmarshalJSON(data []byte) error {
+	var intermDataStruc struct {
+		Validations []map[string]Validation `json:"validations"`
+		Customers   []Customer              `json:"customers"`
+		Pagination  Pagination              `json:"pagination"`
+	}
+	err := json.Unmarshal(data, &intermDataStruc)
+	if err != nil {
+		return err
+	}
+	v.Customers = intermDataStruc.Customers
+	v.Pagination = intermDataStruc.Pagination
+	v.Validations = map[string]Validation{}
+	for _, validation := range intermDataStruc.Validations {
+		for key, val := range validation {
+			v.Validations[key] = val
+		}
+	}
+	return nil
+}
