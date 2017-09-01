@@ -45,7 +45,7 @@ var _ = Describe("Customer", func() {
 		It("returns many fields if they are invalid", func() {
 			customer := Customer{"id": 1, "name": "David", "country": "France", "age": nil}
 
-			Expect(customer.InvalidFields(exampleValidations)).To(Equal([]string{"email", "newsletter"}))
+			Expect(customer.InvalidFields(exampleValidations)).To(ConsistOf([]string{"email", "newsletter"}))
 		})
 	})
 })

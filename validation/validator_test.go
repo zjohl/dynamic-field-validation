@@ -34,11 +34,11 @@ var _ = Describe("Validator", func() {
 			},
 		},
 		Customers: []Customer{
-			{"id": 1, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true},
-			{"id": 2, "name": "Lily", "email": "lily@interview.com", "age": 24, "country": "China", "newsletter": false},
-			{"id": 3, "name": "Bernardo", "email": "bernardo@interview.com", "age": 30, "country": "Brazil", "newsletter": "false"},
-			{"id": 4, "name": "Gabriel", "email": "gabriel@interview.com", "age": 28, "country": "Canada", "newsletter": true},
-			{"id": 5, "name": "Alex", "email": "alex@interview.com", "age": 29, "country": "United States", "newsletter": true},
+			{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true},
+			{"id": 2.0, "name": "Lily", "email": "lily@interview.com", "age": 24, "country": "China", "newsletter": false},
+			{"id": 3.0, "name": "Bernardo", "email": "bernardo@interview.com", "age": 30, "country": "Brazil", "newsletter": "false"},
+			{"id": 4.0, "name": "Gabriel", "email": "gabriel@interview.com", "age": 28, "country": "Canada", "newsletter": true},
+			{"id": 5.0, "name": "Alex", "email": "alex@interview.com", "age": 29, "country": "United States", "newsletter": true},
 		},
 		Pagination: Pagination{
 			CurrentPage: 1,
@@ -91,49 +91,108 @@ var _ = Describe("Validator", func() {
 	})
 
 	Describe("Validate", func() {
-		exampleCustomer := &Customer{"id": 1, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+		Context("when a field is nil", func() {
+			It("returns true if unrequired", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
 
-		It("returns true for unrequired fields", func() {
-			validation := Validation{
-				Required: false,
-			}
-			Expect(validation.Validate(exampleCustomer, "some-field")).To(BeTrue())
+				validation := Validation{Required: false, Type: "number"}
+
+				Expect(validation.Validate(customer, "some-nil-field")).To(BeTrue())
+			})
+
+			It("returns false if required", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Type: "number"}
+
+				Expect(validation.Validate(customer, "some-nil-field")).To(BeFalse())
+			})
 		})
 
-		It("returns true if a string is within the specified length", func() {
-			validation := Validation{
-				Length: &Length{Min: 1},
-			}
-			Expect(validation.Validate(exampleCustomer, "name")).To(BeTrue())
+		Context("when a field is a boolean", func() {
+			It("returns false if type is not boolean", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Type: "number"}
+
+				Expect(validation.Validate(customer, "newsletter")).To(BeFalse())
+			})
+
+			It("returns true if value is false", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": false}
+
+				validation := Validation{Required: true, Type: "boolean"}
+
+				Expect(validation.Validate(customer, "newsletter")).To(BeTrue())
+			})
 		})
 
-		It("returns false if a string is not within the specified length", func() {
-			validation := Validation{
-				Length: &Length{Max: 3},
-			}
-			Expect(validation.Validate(exampleCustomer, "name")).To(BeFalse())
+		Context("when a field is a number", func() {
+			It("returns false if type is not number", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Type: "string"}
+
+				Expect(validation.Validate(customer, "id")).To(BeFalse())
+			})
+
+			It("returns true if type is number", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Type: "number"}
+
+				Expect(validation.Validate(customer, "id")).To(BeTrue())
+			})
 		})
 
-		It("returns true if a field is the correct type", func() {
-			validation := Validation{
-				Type: "number",
-			}
+		Context("when a field is a string", func() {
+			It("returns false if type is not string", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
 
-			Expect(validation.Validate(exampleCustomer, "id")).To(BeTrue())
-		})
+				validation := Validation{Required: true, Type: "boolean"}
 
-		It("returns false if a field is not the correct type", func() {
-			validation := Validation{
-				Type: "boolean",
-			}
+				Expect(validation.Validate(customer, "name")).To(BeFalse())
+			})
 
-			Expect(validation.Validate(exampleCustomer, "newsletter")).To(BeFalse())
+			It("returns true if type is string", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
 
-			validation = Validation{
-				Type: "number",
-			}
+				validation := Validation{Required: true, Type: "string"}
 
-			Expect(validation.Validate(exampleCustomer, "name")).To(BeFalse())
+				Expect(validation.Validate(customer, "name")).To(BeTrue())
+			})
+
+			It("returns true if length is greater than minimum", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Length: &Length{Min: 4}}
+
+				Expect(validation.Validate(customer, "name")).To(BeTrue())
+			})
+
+			It("returns false if length is less than minimum", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Length: &Length{Min: 6}}
+
+				Expect(validation.Validate(customer, "name")).To(BeFalse())
+			})
+
+			It("returns true if length is less than maximum", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Length: &Length{Max: 6}}
+
+				Expect(validation.Validate(customer, "name")).To(BeTrue())
+			})
+
+			It("returns false if length is greater than maximum", func() {
+				customer := &Customer{"id": 1.0, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+				validation := Validation{Required: true, Length: &Length{Max: 4}}
+
+				Expect(validation.Validate(customer, "name")).To(BeFalse())
+			})
 		})
 	})
 
@@ -141,7 +200,10 @@ var _ = Describe("Validator", func() {
 		It("identifies the invalid customers", func() {
 			expectedResponse, err := ioutil.ReadFile("../fixtures/expected_response.json")
 			Expect(err).NotTo(HaveOccurred())
-			Expect(exampleValidator.InvalidCustomers()).To(Equal(expectedResponse))
+
+			bytes, err := exampleValidator.InvalidCustomers()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(bytes).To(MatchJSON(expectedResponse))
 		})
 	})
 })

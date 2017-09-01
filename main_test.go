@@ -2,9 +2,9 @@ package main_test
 
 import (
 	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"os/exec"
+
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -15,20 +15,14 @@ var _ = Describe("Main", func() {
 
 	It("validates the reponse of the provided url", func() {
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "application/json")
-			bytes, err := ioutil.ReadFile("fixtures/example_api_response.json")
-			Expect(err).NotTo(HaveOccurred())
-			w.Write(bytes)
-		}))
-
-		cmd := exec.Command(binaryPath, server.URL)
+		cmd := exec.Command(binaryPath, "http://backend-challenge-winter-2017.herokuapp.com/customers.json")
 		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
 		Expect(err).NotTo(HaveOccurred())
 
-		expectedResponse, err := ioutil.ReadFile("fixtures/expected_response.json")
+		expectedResponse, err := ioutil.ReadFile("fixtures/expected_response_integration.json")
 		Expect(err).NotTo(HaveOccurred())
-		Eventually(session.Out.Contents()).Should(Equal(expectedResponse))
+		time.Sleep(time.Second)
+		Eventually(string(session.Out.Contents())).Should(MatchJSON(expectedResponse))
 
 		gexec.CleanupBuildArtifacts()
 	})

@@ -3,6 +3,7 @@ package validation
 import (
 	"encoding/json"
 	"io"
+	"strconv"
 )
 
 type HTTPRequester func(string) (io.ReadCloser, error)
@@ -14,7 +15,7 @@ func GetValidator(url string, requester HTTPRequester) (*Validator, error) {
 	}
 
 	for !validator.Pagination.LastPage() {
-		suffix := "?page=" + string(validator.Pagination.CurrentPage+1)
+		suffix := "?page=" + strconv.Itoa(validator.Pagination.CurrentPage+1)
 		resp, err := makeRequest(url+suffix, requester)
 		if err != nil {
 			return nil, err
@@ -38,12 +39,20 @@ func makeRequest(url string, requester HTTPRequester) (*Validator, error) {
 }
 
 func (v *Validator) InvalidCustomers() ([]byte, error) {
-	invalid := map[string][]string{}
+	invalid := struct {
+		InvalidCustomers []Customer `json:"invalid_customers"`
+	}{
+		InvalidCustomers: []Customer{},
+	}
 	for _, customer := range v.Customers {
 		fields := customer.InvalidFields(v.Validations)
 		if len(fields) != 0 {
-			id := customer["id"].(int)
-			invalid[string(id)] = fields
+			id := customer["id"].(float64)
+			thisCustomer := Customer{
+				"id":             id,
+				"invalid_fields": fields,
+			}
+			invalid.InvalidCustomers = append(invalid.InvalidCustomers, thisCustomer)
 		}
 	}
 
@@ -69,7 +78,7 @@ type Length struct {
 
 func (v *Validation) Validate(customer *Customer, name string) bool {
 	val, ok := (*customer)[name]
-	if !ok {
+	if !ok || val == nil {
 		return !v.Required
 	}
 
@@ -88,9 +97,11 @@ func (v *Validation) Validate(customer *Customer, name string) bool {
 		case string:
 			return v.Type == "string"
 		case bool:
-			return v.Type == "bool"
-		case int:
+			return v.Type == "boolean"
+		case float64:
 			return v.Type == "number"
+		default:
+			return !v.Required
 		}
 	}
 
