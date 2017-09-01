@@ -14,31 +14,23 @@ import (
 var _ = Describe("Validator", func() {
 
 	exampleValidator := &Validator{
-		Validations: []map[string]Validation{
-			{
-				"name": {
-					Required: true,
-					Type:     "string",
-					Length: Length{
-						Min: 5,
-					},
+		Validations: map[string]Validation{
+			"name": {
+				Required: true,
+				Type:     "string",
+				Length: &Length{
+					Min: 5,
 				},
 			},
-			{
-				"email": {
-					Required: true,
-				},
+			"email": {
+				Required: true,
 			},
-			{
-				"age": {
-					Type:     "number",
-					Required: false,
-				},
+			"age": {
+				Type:     "number",
+				Required: false,
 			},
-			{
-				"newsletter": {
-					Required: true,
-				},
+			"newsletter": {
+				Required: true,
 			},
 		},
 		Customers: []Customer{
@@ -95,6 +87,53 @@ var _ = Describe("Validator", func() {
 
 			Expect(count).To(Equal(4))
 			Expect(validator.Customers).To(HaveLen(16))
+		})
+	})
+
+	FDescribe("Validate", func() {
+		exampleCustomer := &Customer{"id": 1, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true}
+
+		It("returns true for unrequired fields", func() {
+			validation := Validation{
+				Required: false,
+			}
+			Expect(validation.Validate(exampleCustomer, "some-field")).To(BeTrue())
+		})
+
+		It("returns true if a string is within the specified length", func() {
+			validation := Validation{
+				Length: &Length{Min: 1},
+			}
+			Expect(validation.Validate(exampleCustomer, "name")).To(BeTrue())
+		})
+
+		It("returns false if a string is not within the specified length", func() {
+			validation := Validation{
+				Length: &Length{Max: 3},
+			}
+			Expect(validation.Validate(exampleCustomer, "name")).To(BeFalse())
+		})
+
+		It("returns true if a field is the correct type", func() {
+			validation := Validation{
+				Type: "number",
+			}
+
+			Expect(validation.Validate(exampleCustomer, "id")).To(BeTrue())
+		})
+
+		It("returns false if a field is not the correct type", func() {
+			validation := Validation{
+				Type: "boolean",
+			}
+
+			Expect(validation.Validate(exampleCustomer, "newsletter")).To(BeFalse())
+
+			validation = Validation{
+				Type: "number",
+			}
+
+			Expect(validation.Validate(exampleCustomer, "name")).To(BeFalse())
 		})
 	})
 

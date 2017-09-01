@@ -47,15 +47,15 @@ func (v *Validator) InvalidCustomers() ([]byte, error) {
 }
 
 type Validator struct {
-	Validations []map[string]Validation `json:"validations"`
-	Customers   []Customer              `json:"customers"`
-	Pagination  Pagination              `json:"pagination"`
+	Validations map[string]Validation `json:"validations"`
+	Customers   []Customer            `json:"customers"`
+	Pagination  Pagination            `json:"pagination"`
 }
 
 type Validation struct {
-	Required bool   `json:"required"`
-	Type     string `json:"type"` // TODO: make enum
-	Length   Length `json:"length"`
+	Required bool    `json:"required"`
+	Type     string  `json:"type"`
+	Length   *Length `json:"length"`
 }
 
 type Length struct {
@@ -63,8 +63,32 @@ type Length struct {
 	Max int `json:"max"`
 }
 
-type Customer map[string]interface{}
+func (v *Validation) Validate(customer *Customer, name string) bool {
+	val, ok := (*customer)[name]
+	if !ok {
+		return !v.Required
+	}
 
-func (c *Customer) IsValid([]map[string]Validation) bool {
-	return false
+	if v.Length != nil {
+		length := len(val.(string))
+		if v.Length.Min != 0 && length < v.Length.Min {
+			return false
+		}
+		if v.Length.Max != 0 && length > v.Length.Max {
+			return false
+		}
+	}
+
+	if v.Type != "" {
+		switch val.(type) {
+		case string:
+			return v.Type == "string"
+		case bool:
+			return v.Type == "bool"
+		case int:
+			return v.Type == "number"
+		}
+	}
+
+	return true
 }
