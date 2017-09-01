@@ -30,22 +30,22 @@ var _ = Describe("Customer", func() {
 			},
 		}
 
-		It("returns nil if all fields are valid", func() {
-			customer := Customer{"id": 2, "name": "Lily", "email": "lily@interview.com", "age": 24, "country": "China", "newsletter": false}
+		It("returns one field if it is invalidd", func() {
+			customer := Customer{"id": 3, "name": "Bernardo", "email": "bernardo@interview.com", "age": 30, "country": "Brazil", "newsletter": "false"}
 
 			Expect(customer.InvalidFields(exampleValidations)).To(BeEmpty())
 		})
 
-		It("returns one field if it is invalid", func() {
-			customer := Customer{"id": 3, "name": "Bernardo", "email": "bernardo@interview.com", "age": 30, "country": "Brazil", "newsletter": "false"}
+		It("returns nil if all fields are vali", func() {
+			customer := Customer{"id": 2, "name": "Lily", "email": "lily@interview.com", "age": 24, "country": "China", "newsletter": false}
 
-			Expect(customer.InvalidFields(exampleValidations)).To(Equal([]string{"password"}))
+			Expect(customer.InvalidFields(exampleValidations)).To(Equal([]string{"name"}))
 		})
 
 		It("returns many fields if they are invalid", func() {
-			customer := Customer{"id": 1, "name": "David", "email": "david@interview.com", "country": "France", "newsletter": true, "age": nil}
+			customer := Customer{"id": 1, "name": "David", "country": "France", "age": nil}
 
-			Expect(customer.InvalidFields(exampleValidations)).To(Equal([]string{"name", "age"}))
+			Expect(customer.InvalidFields(exampleValidations)).To(Equal([]string{"email", "newsletter"}))
 		})
 	})
 })

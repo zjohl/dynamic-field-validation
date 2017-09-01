@@ -38,12 +38,16 @@ func makeRequest(url string, requester HTTPRequester) (*Validator, error) {
 }
 
 func (v *Validator) InvalidCustomers() ([]byte, error) {
-	////allValid := true
-	//for _, customer := range v.Customers {
-	//	//allValid = allValid && customer.IsValid(v.Validations)
-	//}
-	////TODO: collect values and marshal
-	return nil, nil
+	invalid := map[string][]string{}
+	for _, customer := range v.Customers {
+		fields := customer.InvalidFields(v.Validations)
+		if len(fields) != 0 {
+			id := customer["id"].(int)
+			invalid[string(id)] = fields
+		}
+	}
+
+	return json.Marshal(invalid)
 }
 
 type Validator struct {
