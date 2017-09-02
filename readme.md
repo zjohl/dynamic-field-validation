@@ -21,6 +21,8 @@ go get github.com/onsi/ginkgo/ginkgo
 go get github.com/onsi/gomega
 ```
 
+And use `ginkgo -r` to run all tests recursively.
+
 ### Example api response:
 ```
 {
