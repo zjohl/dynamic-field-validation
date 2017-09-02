@@ -12,7 +12,8 @@ import (
 func main() {
 	arguments := os.Args
 	if len(arguments) != 2 {
-		panic("Expected format: ./path-to-binary endpoint-url")
+		fmt.Errorf("Expected format: ./path-to-binary endpoint-url")
+		os.Exit(1)
 	}
 	url := arguments[1]
 
